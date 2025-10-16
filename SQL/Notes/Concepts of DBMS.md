@@ -1,0 +1,505 @@
+
+This is a way to store data. A server is hosted and the server gives out the SQL file to the users that are authorized to access it. We can add or remove users of each server so our data is private to the given list of users. We can also restrict the user to have read or write or both privilages depending upon the standing of the user. This is a full form data storage language. Each DB created will be stored inside a particular folder in our PC locally and we cannot store that data anywhere we want. In order to import or export data from PC to other sources, we need to create a '.sql' file and then export that file. Once exported, the party wanting to use that given .sql file needs to open that file inside their sql workbench of other workable enviornment and that will give them full freedom over the data. Once opened, the matadata is saved locally in their PC in the exact same file every other DB is going to. This is the concept of SQL and how it is handled. Now, to get to the code of SQL.
+
+
+## SQL concepts
+
+- In order to create databases, we use the simple syntax;
+
+		CREATE DATABASE name_of_the_database;
+
+The semi colon is a must and tells the SQL framework where exactly the line ends.
+
+- Here, We need to specify which database we are using in the list of databases. Therefore, we use the syntax;
+
+		 USE name_of_the_database;
+This syntax is pretty straight forward. Moving forward, every change we make will be in the selected database.
+
+- We can drop entire databases with the single line;
+			`DROP DATABASE name_of_the_database;
+This deletes the entire database. 
+
+
+- In order to make your database read only and immutable, you use this command;
+		`` ALTER DATABASE name_of_the_database READ ONLY = 1;
+
+of course, when the read-only is set to 1, the database cannot be changed. It will remain read - only.
+This, I assume, will be useful once the entire database is cleanly updated and ready for other purposes. 
+
+NOTE: When I say a database is immutable, it cannot be deleted aswell. To disable read-only, we just set it equal to 0.
+
+- To create a table, we first need to 'USE' the required database and then, we use the create table command as follows;
+		`CREATE TABLE NAME_OF_THE_TABLE (different column names seperated by commas);
+EX:
+CREATE TABLE Empolyee_data(Name datatype, ID datatype, Email datatype, Pay datatype, date of joining datatype etc etc);
+Note that we do not use the "" marks for column names because we are creating objects and variables there, we are not passing a string. We are naming a string. For each column, we must specify the datatype we are going to store inside it. The datatypes go as follows:
+
+| Type              | Storage | Range          | Notes                                                 |
+| ----------------- | ------- | -------------- | ----------------------------------------------------- |
+| `TINYINT`         | 1 byte  | -128 to 127    | Great for boolean flags (`is_active`, `status_code`). |
+| `SMALLINT`        | 2 bytes | ±32K           | Compact for small counts, like age, quantity.         |
+| `MEDIUMINT`       | 3 bytes | ±8M            | Rarely used — middle ground.                          |
+| `INT` / `INTEGER` | 4 bytes | ±2B            | Standard default choice for IDs.                      |
+| `BIGINT`          | 8 bytes | ±9 quintillion | Use for large-scale datasets or global counters.      |
+|                   |         |                |                                                       |
+
+| Type            | Use Case                | Precision  | Notes                                                        |
+| --------------- | ----------------------- | ---------- | ------------------------------------------------------------ |
+| `DECIMAL(p, s)` | Money, accounting       | Exact      | Stores as string internally, prevents float rounding issues. |
+| `FLOAT`         | Scientific data         | ~7 digits  | Faster but imprecise.                                        |
+| `DOUBLE`        | Scientific, ML datasets | ~15 digits | Use when you need precision but not exactness.               |
+|                 |                         |            |                                                              |
+
+| Type        | Format                | Notes                                            |
+| ----------- | --------------------- | ------------------------------------------------ |
+| `DATE`      | `YYYY-MM-DD`          | For birthdates, logs, etc.                       |
+| `DATETIME`  | `YYYY-MM-DD HH:MM:SS` | No timezone; used for general timestamps.        |
+| `TIMESTAMP` | `YYYY-MM-DD HH:MM:SS` | Auto converts to UTC; smaller range (1970–2038). |
+| `TIME`      | `HH:MM:SS`            | Duration or clock time.                          |
+| `YEAR`      | `YYYY`                | Rarely used; avoid for future-proofing.          |
+
+| Type         | Max Length    | Notes                                                   |
+| ------------ | ------------- | ------------------------------------------------------- |
+| `CHAR(n)`    | Fixed         | Faster for fixed-length codes (ISO codes, hashes).      |
+| `VARCHAR(n)` | Variable      | Most common. Size limit ~65K per row.                   |
+| `TEXT`       | 65,535 chars  | For long text (e.g., descriptions).                     |
+| `MEDIUMTEXT` | 16 MB         | Large articles.                                         |
+| `LONGTEXT`   | 4 GB          | Rarely needed; think logs or blobbed JSON.              |
+| `ENUM`       | 1–255 options | Efficient categorical field, but not easily extensible. |
+
+|Type|Size|Use|
+|---|---|---|
+|`BLOB`|64 KB|Binary data — files, images, etc.|
+|`MEDIUMBLOB`|16 MB|Larger binaries.|
+|`LONGBLOB`|4 GB|Huge files.|
+
+|Type|Notes|
+|---|---|
+|`BOOLEAN` / `BOOL`|Alias for `TINYINT(1)` — stores 0/1.|
+|`BIT(n)`|Bit-field storage, rarely used except for flags.|
+
+
+of all these data types, the most important ones we use are, VARCHAR(n), text, bool, int, Datetime ETC. Also note that in decimal, the first argument is the total number of digits possible in the given datatype and the second argument is the precision (number of digits after the decimal).
+
+- In order to see or 'select' data from a given table, we use the keyword select and it goes as follows;
+			`SELECT * FROM NAME_OF_THE_TABLE;
+
+As we know, * represents everything. That means, we are selecting everything from the given table. But if we do not want that, we can type the name of a particular column and then select it. Selecting any data inside a table let's us see what's in the table.
+
+If we want a countable number of columns, we can use this syntax;
+
+			SELECT col1, col2, ... etc FROM NAME_OF_THE_TABLE;
+
+- Of course we can rename the entire table with just the keyword "rename" and that goes something like this:
+		`RENAME TABLE former_name TO later_name;
+This only works for a table though, not the entire database.
+
+- Here comes one of the most important keywords in the entire SQL language. 
+- The keyword 'ALTER' functions in a lot of different ways. It is used to add columns to a table, remove columns from a table, etc etc. Here is a single use case;
+				`ALTER TABLE name_of_the_table 
+				whatever alteration you want;
+
+Note that the alter statement itself doesn't have any semi colon to it simply because that itself is not the end of the command. 
+
+Here is a dump of where and how the keyword "Alter" is useful
+
+### 🧱 1. `ALTER TABLE`
+
+This is where 90% of `ALTER` usage happens.
+
+#### ✅ You Can:
+
+- **Add / Drop Columns**
+    
+    `ALTER TABLE employees ADD COLUMN age INT; ALTER TABLE employees DROP COLUMN salary;`
+    
+- **Modify Column Datatype / Default**
+    
+    `ALTER TABLE employees MODIFY COLUMN age SMALLINT; ALTER TABLE employees ALTER COLUMN age INT DEFAULT 18;
+    
+- **Rename Columns**
+    
+    `ALTER TABLE employees RENAME COLUMN age TO employee_age;`
+    
+- **Rename the Table**
+    
+    `ALTER TABLE employees RENAME TO staff;`
+    
+- **Add / Drop Constraints**
+    
+    `ALTER TABLE employees ADD CONSTRAINT pk_emp PRIMARY KEY (id); ALTER TABLE employees DROP CONSTRAINT pk_emp;`
+    
+- **Add / Drop Indexes**
+    
+    `ALTER TABLE employees ADD INDEX idx_name (name); ALTER TABLE employees DROP INDEX idx_name;`
+    
+- **Add / Drop Foreign Keys**
+    
+    `ALTER TABLE orders ADD FOREIGN KEY (emp_id) REFERENCES employees(id);`
+    
+- **Change Storage Engine or Character Set**
+    
+    `ALTER TABLE employees ENGINE = InnoDB; ALTER TABLE employees CONVERT TO CHARACTER SET utf8mb4;`
+    
+
+💡 **Strategic note:**  
+`ALTER TABLE` locks the table while operating — on large datasets this can freeze production.  
+In big companies, DBAs use _online schema migration tools_ (like `gh-ost`, `pt-online-schema-change`) to make such changes safely.
+
+---
+
+### ⚙️ 2. `ALTER DATABASE`
+
+Much smaller scope.
+
+#### ✅ You Can:
+
+- Change **character set** or **collation**:
+    
+    `ALTER DATABASE mydb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;`
+    
+
+#### 🚫 You Cannot:
+
+- Rename the database
+    
+- Move or clone it
+    
+- Alter its user grants
+    
+
+So `ALTER DATABASE` is mostly for _text encoding and sorting rules_, not structural transformations.
+
+---
+
+### 🔐 3. `ALTER USER`
+
+Used for authentication-level changes.
+
+`ALTER USER 'rahul'@'localhost' IDENTIFIED BY 'NewPassword123';`
+
+Or modify privileges and plugin auths.
+
+---
+
+### 🧠 4. `ALTER VIEW`
+
+Change a view definition:
+
+`ALTER VIEW active_employees AS SELECT * FROM employees WHERE is_active = 1;`
+
+Equivalent to dropping and recreating, but keeps permissions.
+
+---
+
+### 🏗️ 5. `ALTER PROCEDURE`, `ALTER FUNCTION`, `ALTER EVENT`
+
+Used to modify metadata (like SQL security or comments) —  
+but you **can’t** actually edit their core logic; you must drop & recreate them.
+
+---
+
+## ⚡ The Strategic Angle
+
+|Level|What You Can Do|Risks|
+|---|---|---|
+|**Database**|Change encoding, defaults|Minimal|
+|**Table**|Full schema mutation|Can lock or corrupt data if mishandled|
+|**Column**|Change type, name, constraints|Data loss if conversion fails|
+|**User**|Security and auth|Risk of lockout|
+|**View/Procedure**|Update logic or permissions|Low, but can break dependencies|
+
+Now, that is the single most powerful command in the entireity of SQL.
+
+
+## DELETE, DROP
+
+DELETE is a keyword used to delete rows. The keyword is usually followed by "FROM" and then table name and then a condition on which the deletion should occur. 
+
+EX:
+	`DELETE FROM table1 WHERE age < 18;
+
+DROP is a keyword to delete an entire table or even a database. Just type DROP, then TABLE or DATABASE and then the name of the database or table.
+
+EX:
+	`DROP TABLE table1;
+	`DROP DATABASE apex_legends;
+	
+
+# Auto commit:
+
+- **Autocommit ON:** Each SQL statement is immediately committed; failures affect only that statement.
+    
+- **Autocommit OFF:** Statements are grouped in a transaction; you must `COMMIT` or `ROLLBACK`, so failures can undo all changes in the group.
+
+			SET AUTOCOMMIT = 0; --> TURNED OFF
+			SET AUTOCOMMIT = 1; --> TURNED ON
+
+without autocommit, you would have to manually commit everything with a single worded line --> COMMIT;
+
+to rollback : --> ROLLBACK; (Note that this only works before we commit, therefore, be careful when you commit if you actually plan on commiting)
+
+By default, it's turned on.
+There is a major disadvantage to using autocommit though. Once a line is run, it autocommits, so we cannot roleback if we want. But if we are commiting manually, we can always rollback.
+
+
+## INSERT
+
+In order to add rows to a particular table, first make sure that you are using that particular database and then do this:
+
+				 INSERT INTO name_of_the_table VALUES
+				 (row1),
+				 (row2),
+				 (row3);
+
+However, say we don't have 10 rows of data for a particular row, but there are 10 columns, what we do is this:
+				 ``` INSERT INTO name_of_the_table(column1, column2, column3) VALUES
+				 (three_columns_data_row1),
+				 (three_columns_data_row2);
+				 ```
+
+
+## 1. How to find the count of rows in a table?
+
+In SQL, there are two ways to do this. One is rough and approximate, but very fast. The other is dependent on the size of the database. Usually we opt for the method which is O(n) because it is accurate and we don't use the O(1) method normally. 
+
+### O(n) method:
+
+What we do here is, we make the computer check every row and make a count. Therefore, it is O(n). Here is the code for it:
+
+`SELECT COUNT(*) FROM Schema_name.Table_name;`
+
+
+### O(1) method:
+
+What we do here is, we go into the metadata of the table that we are querying from and we extract the count from there. This count refreshes only when the system auto ANALYSEs the data being pushed into it. The count we get will be from the last analysis. That count too is an estimate. therefore, we cannot really rely on this one to be exact. But it does give us an estimate real quick. Here is how you implement it:
+
+`SELECT TABLE_ROWS FROM information_schema.tables WHERE table_schema = 'name_of_the_schema' AND table_name = 'name_of_the_table';`
+
+NOTE: The `information_schema.tables` contains the metadata including, but not limited to, TABLE_ROWS, DATA_LENGTH, AVG_ROW_LENGTH, MAX_DATA_LENGTH, ENGINE, VERSION et cetera. 
+
+
+## JOINS... What are they?
+
+
+This table is all you need to know about joins:
+
+|Join Type|Set Analogy|Explanation|
+|---|---|---|
+|**INNER JOIN**|A ∩ B (intersection)|Only rows that exist in both tables.|
+|**LEFT JOIN**|A ∪ (A ∩ B complement)|All rows from the left table; fill NULLs for missing right-table rows.|
+|**RIGHT JOIN**|B ∪ (B ∩ A complement)|All rows from the right table; fill NULLs for missing left-table rows.|
+|**FULL OUTER JOIN**|A ∪ B (union)|All rows from both tables; fill NULLs where matches are missing.|
+|**CROSS JOIN**|A × B (Cartesian product)|Every row from left combined with every row from right.|
+
+Left join basically does this:
+
+whatever is in the left table must always be in the left join table. but, sometimes, the corresponding data related to the left table will not be in the right table. Then, we just add NULL to the columns related to the right table but we never leave the left table row. The number of rows in left join is EXACTLY equal to the number of rows in the left table. The same goes for right join.
+
+Inner join only gives the particular row in the table if the entity we are basing our search on is in both the tables. Here are the code snippets of all the above joins in action.
+
+### INNER JOIN
+
+`SELECT * FROM table_1 x INNER JOIN table_2 y ON x.ID = y.ID;`
+
+What we are doing is, we are calling entities in table_1 as x and calling entities in table_2 as y. If for any entity x.ID = y.ID, then, it is quite clear that that particular row will be in the join. The x and y are solely used to write the condition. ON is the keyword, not where... ON.
+
+### LEFT JOIN
+
+`SELECT * FROM table_1 x LEFT JOIN table_2 y ON x.ID = y.ID;`
+
+I seriously do not think that right join is useful at all because we can just use left join on everything. So, I will not be writing the code here. It's a waste of space.
+
+### OUTER JOIN
+
+`SELECT * FROM table_1 x OUTER JOIN table_2 y ON x.ID = y.ID;`
+
+### CROSS JOIN
+
+`SELECT * FROM table_1 x CROSS JOIN table_2 y ON x.ID = y.ID;`
+
+
+# How do you stack statements on one another?
+
+```
+SELECT COUNT(*) FROM (SELECT * FROM (SELECT x.*, y.amount, y.from_date, y.to_date FROM employee x LEFT JOIN salary y ON x.emp_no = y.emp_no AND y.to_date = '9999-01-01') as T WHERE amount IS NULL) AS k;
+```
+From that, we can clearly see that we are refining a table created and then seeing the number of rows in that table. All of this is stacked on one another. But the thing you'd notice is, we are using these two helping statements:
+
+`as T` and `as K` .
+
+Now, We did this because, wherever SQL expects a table, it doesn't take a statement. Take a look at this example:
+
+`SELECT COUNT(*) FROM ...` SQL expects a table after that 'from'. We cannot give it a statement instead of a table. Therefore, we give it a statement and then name the statement as a variable T so that SQL thinks it's an actual table and runs the code inside. We are giving a fake variable to the whole statement. that's it.
+
+## Sorting data
+
+When we have a table and we want to view the table in a neat ascending order or descending order based on anything, this is what we need to do. We can either sort in ascending order or descending order. Both of their syntaxes are very similar so here is a snapshot of the code:
+
+Ascending order:
+
+`SELECT * FROM table_name ORDER BY column_name ASC;`
+
+Descending order:
+
+`SELECT * FROM table_name ORDER BY column_name DESC;`
+
+We can even sort on multiple columns. 
+
+EX:
+
+`SELECT * FROM table_name ORDER BY column_name1 ASC, column_name2 DESC;`
+
+What this does is, it sorts the data first by column_name1 and then, if any values of column_name1 are same, we would look at column_name2.
+
+
+## Aggregates... The soul of SQL
+
+Now, to the most important thing and also, the easiest. 
+Aggregates are functions that take in multiple rows of input and give a single output or a statistic or some sort of metric. These functions answers questions like, "What is the average pay?", "How many employees are here?" et cetera. 
+Think of it this way, ANYTHING THAT YOU CAN THINK OF THAT TAKES MULTIPLE ROWS AND GIVES A DESIRED OUTPUT IS PROBABLY AN AGGREGATE. It's as simple as that. 
+
+
+Here are a few of the most important aggregates:
+
+|Function|Description|Example|Result|
+|---|---|---|---|
+|`COUNT()`|Number of rows|`COUNT(*)`|`354`|
+|`SUM()`|Adds up numeric values|`SUM(salary)`|`₹15,200,000`|
+|`AVG()`|Average value|`AVG(age)`|`37.4`|
+|`MIN()`|Smallest value|`MIN(salary)`|`₹35,000`|
+|`MAX()`|Largest value|`MAX(salary)`|`₹420,000`|
+
+Here is an example code snippet that covers all the functions of aggregation:
+
+```
+SELECT 
+COUNT(*) AS count,
+SUM(salary) AS sum_of_all_salaries,
+AVG(salary) AS avg_salary,
+MIN(salary) AS min_salary,
+MAX(salary) AS max_salary
+FROM table_name;
+```
+
+*We named each value we derived as something and then we made a table out of it to present to the user. That is why we used AS. The column names are right beside the AS part.*
+
+We didn't pass in salary for count() as well because count doesn't count NULL values. Say that a few employees have their salaries set to NULL for some reason. Then, we simply won't be able to get the real number of employees. However, if there is a select all type of operation, we will get the actual number of people in the table.
+
+We can also filter the things we are operating on. Here is an example:
+
+`SELECT MAX(salary) FROM table_name WHERE due IS NOT NULL;`
+
+We are checking the max salary where there are no dues. That is how to use a filter with these functions. 
+
+## GROUPS
+
+Groups is just aggregation on steroids. To understand this topic to it's extreme, we first need to know why it's used. Look at this question:
+
+`Write a query to find the highest salary in each department.`
+
+In this particular question, we need to solve it by finding the highest salary in each department separately and then presenting it all together in a single table with each row being each department and each row containing the max salary of that particular department. So, we need to run aggregate n number of times where n is the number of departments. In order to do that, we use groups. Here is an example of how groups work:
+
+```
+SELECT dept_no, MAX(salary) AS max_salary
+FROM salary_table
+GROUP_BY dept_no;
+```
+
+What we are doing here is, we are creating a table that contains a dept_no and max_salary and we are grouping by dept_no. 
+
+**THE MOST IMPORTANT THING TO NOTE HERE IS, EVERY COLUMN OTHER THAN THE COLUMN WE ARE GROUPING BY NEEDS TO BE UNDER AN AGGREGATING FUNCTION. IF YOU THINK ABOUT IT, THERE IS A LOGIC BEHIND IT. BUT IT'S A TOUGHER ONE TO GRASP. SO REMEMBERING THIS ONE THING WON'T HURT.***
+also, NULL is also considered a group. Remember that.
+
+We can also group by multiple columns. Here is an example.
+
+```
+SELECT dept_no, job_title, MAX(salary) AS max_salary
+FROM salary_table
+GROUP_BY dept_no, job_title;
+```
+
+What this does is, it creates a new row for every combination of dept_no and job_title. This is good for you.
+
+Just as we use WHERE in aggregations, we use HAVING in groups. Here is a quick example on how:
+
+```
+SELECT dept_no, COUNT(*) AS count_per_dept
+FROM table_name
+HAVING COUNT(*) > 2;
+```
+
+The most important thing here is, "count_per_dept" is considered not as a variable but as a column name. We cannot use count_per_dept > 2 because that is not a variable yet. However, if we make the quiery a sub quiery, that is possible. This works.
+
+```
+SELECT * FROM
+(SELECT dept_no, COUNT(*) AS count_per_dept
+FROM table_name) AS t
+HAVING count_per_dept > 2;
+```
+
+
+## SUBQUERIES AND NESTED QUERIES
+
+Simply, A SELECT statement inside any other statement (SELECT, INSERT, DELETE, ET CETERA) is called a subquery. Now, multiple layers of queries are called nested subqueries. 
+
+There are different types of subqueries:
+
+- One that returns a scalar quantity (Scalar subquery (max, min, avg et cetera))
+- One that returns a row (row subquery)
+- One that returns a table (derived table)
+- One that returns it's entire self (self-returning subquery used in IN ALL ANY et cetera)
+
+There are also 2 types of subqueries based on the relationship between the main query and the subquery:
+
+#### Correlated Subquery
+
+Here, The subquery is interlinked with the main query and doesn't make proper sense without it. Here is an example:
+
+```
+SELECT e.name
+FROM employees e
+WHERE e.salary > (
+  SELECT AVG(salary) FROM employees WHERE dept_id = e.dept_id
+);
+```
+
+Here, clearly we are using the major queries variables inside the subquery.
+
+
+#### Uncorrelated Subquery
+
+Here, the subquery doesn't need the main query to make sense. It can be a stand alone block of code. Here is an example:
+
+```
+SELECT name FROM employees
+WHERE dept_id = (SELECT id FROM departments WHERE name = 'Sales');
+```
+
+##### Membership Checks
+
+In the context of subqueries and operators, here is a block of code you might be interested in:
+
+```
+SELECT c.*
+FROM customers c
+WHERE EXISTS (
+  SELECT 1 FROM orders o WHERE o.customer_id = c.id
+);
+```
+
+Here, we are checking if there is at least 1 row such that `o.customer_id` equals `c.id`. If there is, we will return True. Else, we will return False. So, this is a Boolean membership check situation. 
+
+
+
+### UPDATE AND SET
+
+These update and set commands are two different commands which work together to change a certain column's data. Here is an example:
+
+```
+UPDATE employee
+SET col1 = x.col1,
+col2 = x.col2,
+col3 = x.col3
+WHERE x.id > 0;
+```

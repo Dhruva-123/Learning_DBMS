@@ -1,0 +1,122 @@
+Basic SQL Operations
+
+Write a query to retrieve all columns from a table named employees. #
+
+How would you find the total number of records in a table? #
+
+Explain the difference between INNER JOIN and LEFT JOIN. #
+
+Write a query to fetch records where a column's value is NULL. #
+
+How can you sort the results of a query in descending order? #
+
+Aggregations and Grouping #
+
+Write a query to calculate the average salary from an employees table. #
+
+How would you group records by a specific column and count the number of occurrences? #
+
+Explain the purpose of the HAVING clause in SQL. #
+
+Write a query to find the highest salary in each department. #
+
+How can you retrieve the second highest salary from a table? # ???
+
+Subqueries and Nested Queries
+
+Write a query to find employees who earn more than the average salary.
+
+How would you use a subquery to fetch records from a table based on another table's data?
+
+Explain the difference between a correlated and a non-correlated subquery.
+
+Write a query to list employees who do not have any assigned projects.
+
+How can you update records in a table using data from another table?
+
+Advanced SQL Concepts
+
+Explain the concept of normalization and its importance in database design.
+
+What are the different types of joins in SQL, and when would you use each?
+
+Write a query to find all employees who have been with the company for more than 5 years.
+
+How would you implement a many-to-many relationship in a relational database?
+
+Explain the use of indexes and how they affect query performance.
+
+Transactions and Data Integrity
+
+What are ACID properties in database transactions?
+
+Write a query to start a transaction, update a record, and commit the transaction.
+
+How would you handle errors during a transaction to ensure data integrity?
+
+Explain the difference between TRUNCATE and DELETE commands.
+
+What is a foreign key, and how does it enforce referential integrity?
+
+Performance Optimization
+
+How can you identify slow-running queries in MySQL?
+
+Explain the use of EXPLAIN in analyzing query performance.
+
+What strategies can be employed to optimize a query that joins multiple large tables?
+
+How would you handle indexing in a table with frequent updates?
+
+Explain the concept of query caching in MySQL.
+
+Stored Procedures and Triggers
+
+Write a stored procedure to insert a new employee record into the employees table.
+
+Explain the difference between a stored procedure and a function in MySQL.
+
+What is a trigger, and how can it be used to enforce business rules?
+
+Write a trigger that automatically updates the last_modified timestamp when a record is updated.
+
+How would you handle error handling within a stored procedure?
+
+Complex Queries and Real-World Scenarios
+
+Write a query to find the top 3 selling products in the last quarter.
+
+How would you calculate the running total of sales for each day?
+
+Write a query to identify customers who have not placed an order in the last 6 months.
+
+How can you implement pagination in a query result?
+
+Write a query to compare sales figures between two consecutive years.
+
+Data Modeling and Schema Design
+
+Design a database schema for an online bookstore, including tables for books, authors, and customers.
+
+Explain the concept of denormalization and when it might be appropriate.
+
+What are the benefits and drawbacks of using views in a database?
+
+How would you handle schema changes in a production environment?
+
+Explain the role of constraints in database design.
+
+Security and User Management
+
+How would you grant and revoke privileges for a user in MySQL?
+
+Explain the concept of roles in MySQL user management.
+
+What measures can be taken to secure a MySQL database?
+
+How can you audit user activity in MySQL?
+
+Explain the importance of data encryption in database security.
+
+
+https://github.com/santoshmungle/complex-sql-queries/blob/master/README.md
