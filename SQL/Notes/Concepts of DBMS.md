@@ -503,3 +503,40 @@ col2 = x.col2,
 col3 = x.col3
 WHERE x.id > 0;
 ```
+
+What this does is, it helps us update the values inside a table. The stuff we have learnt thus far didn't teach us how to update or change the data we have inside an already existing table and already existing values. This does exactly that. You chose the table you want the changes to occur in, you set each column to a desired column(usually self changed or another column from another table entirely) and you apply a condition on which you want the changes to happen. You have to be careful when you are setting a column to another column located somewhere else because it might have a different size or even a different datatype. Be mindful of all these situations in order to avoid fatal flaws in your code. 
+
+
+### Normalization
+
+This concept is pretty simple. Just like we have good practices in coding (good spacing, nice naming of variables et cetera), we have normalization in SQL. There are a few rules that, if we follow, would render our tables clean without any redundancies. We can each rule "normal form". Here is the table of general rules to follow :
+
+|Normal Form|Goal|Key Rule|
+|---|---|---|
+|**1NF (First Normal Form)**|Remove repeating groups|Each column must contain atomic (indivisible) values, and each row must be unique|
+|**2NF (Second Normal Form)**|Remove partial dependency|Table must be in 1NF and all non-key attributes fully depend on the **whole primary key**|
+|**3NF (Third Normal Form)**|Remove transitive dependency|Table must be in 2NF and all non-key attributes depend **only on the primary key**, not other non-key columns|
+|**BCNF (Boyce-Codd NF)**|Handle edge cases beyond 3NF|Every determinant must be a candidate key|
+|Higher NFs (4NF, 5NF)|Handle multi-valued & join dependencies|Mostly used in complex databases|
+
+If we bear these in mind while we make tables, our tables will be much cleaner. It all comes down to practice for this. There is nothing much to explain here.
+
+---
+This single problem will teach us different, highly essential, concepts of SQL
+
+`Write a query to find all employees who have been with the company for more than 5 years.`
+
+In order to solve this problem, we first have to find a way to check the age of the employee according to the company. That requires the current date and the date of their joining. The solution goes like this with the help of the following functions:
+
+- CURDATE(): This returns the current date (16-10-2025) in DD-MM-YYYY format.
+- TIMESTAMPDIFF(unit, start_date, end_date) : This function is the gold standard to find the difference between dates. unit = year or month or day. Whatever unit you give, it returns the difference in that unit. Say I want my 1 and 3 days employee's work span in months. It will return 12. suppose I want it in days, it will return 368. 
+- DESCRIBE keyword: This keyword helps us see the type of object our columns are storing, be it int or VARCHAR or anything. How to use this??
+  `DESCRIBE table_name`
+  and this gives a comprehensive table describing the different metadata of that table. 
+
+Now, combining all this together, we can solve the problem like so:
+```
+SELECT * FROM table_name WHERE TIMESTAMPDIFF(DAY, from_date_column, CURDATE()) > (5*365)
+```
+
+We calculated in days because I felt like that was more accurate. It all boils down to you.

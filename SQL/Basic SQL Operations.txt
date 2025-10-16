@@ -20,27 +20,25 @@ Explain the purpose of the HAVING clause in SQL. #
 
 Write a query to find the highest salary in each department. #
 
-How can you retrieve the second highest salary from a table? # ???
+How can you retrieve the second highest salary from a table? # 
 
-Subqueries and Nested Queries
+Subqueries and Nested Queries#
 
-Write a query to find employees who earn more than the average salary.
+Write a query to find employees who earn more than the average salary. #
 
-How would you use a subquery to fetch records from a table based on another table's data?
+How would you use a subquery to fetch records from a table based on another table's data? # ???
 
-Explain the difference between a correlated and a non-correlated subquery.
+Explain the difference between a correlated and a non-correlated subquery. #
 
-Write a query to list employees who do not have any assigned projects.
+Write a query to list employees who do not have any assigned projects. #
 
-How can you update records in a table using data from another table?
+How can you update records in a table using data from another table? #
 
 Advanced SQL Concepts
 
-Explain the concept of normalization and its importance in database design.
+Explain the concept of normalization and its importance in database design. #
 
-What are the different types of joins in SQL, and when would you use each?
-
-Write a query to find all employees who have been with the company for more than 5 years.
+Write a query to find all employees who have been with the company for more than 5 years.#
 
 How would you implement a many-to-many relationship in a relational database?
 
@@ -118,5 +116,7 @@ How can you audit user activity in MySQL?
 
 Explain the importance of data encryption in database security.
 
+
+practice dataset location:
 
 https://github.com/santoshmungle/complex-sql-queries/blob/master/README.md
