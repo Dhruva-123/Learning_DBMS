@@ -521,6 +521,8 @@ This concept is pretty simple. Just like we have good practices in coding (good 
 
 If we bear these in mind while we make tables, our tables will be much cleaner. It all comes down to practice for this. There is nothing much to explain here.
 
+Here is the most fundamental thing you should always be aware of. If your table has multiple many to many relationships, that is a bad table. You need to maintain it such that each table has at the most 1 many-to-many relationships.
+
 ---
 This single problem will teach us different, highly essential, concepts of SQL
 
@@ -540,3 +542,27 @@ SELECT * FROM table_name WHERE TIMESTAMPDIFF(DAY, from_date_column, CURDATE()) >
 ```
 
 We calculated in days because I felt like that was more accurate. It all boils down to you.
+
+---
+
+
+### Transactions
+
+This concept is fairly simple. Sometimes, we want a bunch of code to run together and if some of it fails, we want to stop the entire process. That is where we use transactions. It's major use is in banking and money related situations because say that an append works but deduction doesn't work, then we just created money out of thin air. That is a huge problem. That is why transactions exist. Here is how you implement them:
+
+```
+START TRANSACTION;
+
+-- doing some changes
+UPDATE employee SET pay = pay + 10000 WHERE industry = 'IT';
+
+UPDATE employee SET pay = pay - 10000 WHERE industry = 'Finance';
+
+-- We are commiting if both of the lines work
+COMMIT;
+
+-- Or we will not do anything
+ROLLBACK;
+```
+
+So essentially, we are doing both of these tasks or none of them. They need to be done together or all goes to hell. That is when a transaction is useful.

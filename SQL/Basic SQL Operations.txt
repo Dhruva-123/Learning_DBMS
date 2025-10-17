@@ -40,15 +40,15 @@ Explain the concept of normalization and its importance in database design. #
 
 Write a query to find all employees who have been with the company for more than 5 years.#
 
-How would you implement a many-to-many relationship in a relational database?
+How would you implement a many-to-many relationship in a relational database? #
 
-Explain the use of indexes and how they affect query performance.
+Explain the use of indexes and how they affect query performance. #
 
-Transactions and Data Integrity
+Transactions and Data Integrity #
 
-What are ACID properties in database transactions?
+What are ACID properties in database transactions? #
 
-Write a query to start a transaction, update a record, and commit the transaction.
+Write a query to start a transaction, update a record, and commit the transaction. #
 
 How would you handle errors during a transaction to ensure data integrity?
 
