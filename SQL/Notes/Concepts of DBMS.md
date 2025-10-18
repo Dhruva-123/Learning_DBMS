@@ -643,3 +643,145 @@ This is a keyword used when you want to delete an entire table. No conditions ar
 
 `TURNCATE TABLE table_name;`
 
+
+### KEYS
+
+There are two different types of keys. 
+
+- Foreign Key
+- Primary Key
+
+These two are inter-related. A foreign key is a column (or a group of columns) in one table that reference to the primary key of another table. This creates a link between two given tables. 
+Here is an example code snippet:
+
+```
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
+
+```
+
+What we did here is, we are linking table departments and employees via the `dept_id` column. This sort of establishes relational integrity between tables. How is that done? there are certain rules that these references follow that ensure top notch integrity.
+
+- INSERT RULE: 
+	You cannot insert a row in the foreign key column if it does not exist in the primary key column. This means that the foreign key column will always be a subset to the primary one.
+- UPDATE RULE:
+    You cannot update a row such that the link between the primary and the foreign keys are broken. You must use something called a `cascade` which we will talk about soon.
+- DELETE RULE:
+	You cannot delete a row in the parent table if it is still referenced in the child table. It is pretty clear that the primary key is the parent table and the foreign key table is the child table. Of course you can use the same `cascade` keyword to delete rows, which we will talk about soon.
+
+Following these rules maintain a well maintained relationship between tables without having 'orphan' rows or records.
+
+**CASCADE** :
+
+what cascade does is, it allows the deletion of parent rows without any errors or trouble. During the usage of a cascaded foreign key, when a parent is deleted, all of it's children are deleted. This maybe a desired quality sometimes but not desirable other times. So better be careful when you write that CASCADE line. Here is the syntax for it:
+
+```
+CREATE TABLE employee(
+emp_id INT PRIMARY KEY,
+pay INT,
+);
+
+CREATE TABLE tech(
+emp_id INT,
+FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);
+```
+
+What we did here is, we set cascade on delete and update operations. What this does is, once a parent is deleted or updated, the effects are passed down it's children. There can be any number of generations of keys. 
+
+### CONSTRAINTS
+
+I know this concept should have been further up of this note, but hey, it is here:
+
+Constraints are something we use during the initialization of a column. Along side the name, datatype of the column, we also decide the constraints of the column. 
+
+Here are a few constraints to know:
+
+|Constraint|What it does|Example|
+|---|---|---|
+|**PRIMARY KEY**|Uniquely identifies each row in a table|`emp_id INT PRIMARY KEY`|
+|**FOREIGN KEY**|Ensures a column’s value exists in another table|`FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)`|
+|**UNIQUE**|Ensures all values in a column are unique|`email VARCHAR(50) UNIQUE`|
+|**NOT NULL**|Ensures a column cannot have NULL values|`name VARCHAR(50) NOT NULL`|
+|**CHECK**|Ensures a condition is true for values in a column|`age INT CHECK (age >= 18)`|
+|**DEFAULT**|Provides a default value if none is given|`status VARCHAR(10) DEFAULT 'active'`|
+
+Here is the syntax for all of these: (We will be excluding keys here cuz they were already written above)
+
+UNIQUE:
+
+```
+CREATE TABLE name_of_table(
+a INT UNIQUE,
+b INT UNIQUE,
+c INT
+);
+```
+
+
+What this does is, it only takes unique a and unique b but any c. We cannot have the same no matter the b and c values, similarly, we cannot have same b values no matter what the a, c values are. 
+
+But we can also write like this
+
+```
+CREATE TABLE name_of_table(
+a INT,
+b INT,
+c INT,
+UNIQUE(a,b,c)
+);
+```
+
+What this does is, it only takes in unique (a, b, c) pairs. if we set unique only to (a, b) it makes sure that (a, b) is unique and doesn't care about c at all. You will get this with practice.
+
+NOT NULL:
+
+```
+CREATE TABLE name_of_table(
+a INT NOT NULL
+);
+```
+
+What that means is, it doesn't take a row if a is NULL. Pretty straight forward.
+
+CHECK:
+
+```
+CREATE TABLE name_of_table(
+a INT CHECK (a < 10)
+);
+```
+
+It only takes in values of a if they are less that 10.
+
+DEFAULT:
+
+```
+CREATE TABLE name_of_table(
+a INT DEFAULT 10
+);
+```
+
+What this does is, if no value is given, it gives a default value of 10.
+
+Note that any of these can be written at the end too, like this
+
+```
+CREATE TABLE name_of_table(
+a INT,
+DEFAULT(a) 10
+);
+```
+
+This and that are both the same. This works for every constraint here.
