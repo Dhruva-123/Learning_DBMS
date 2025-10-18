@@ -566,3 +566,80 @@ ROLLBACK;
 ```
 
 So essentially, we are doing both of these tasks or none of them. They need to be done together or all goes to hell. That is when a transaction is useful.
+
+Now, the most fundamental part of a transaction is security and sanctity. So it is natural for this question to form : `How would you handle errors during a transaction to ensure data integrity?`
+
+to solve this particular problem, there are a LOT of different things we can do. I will list some of them here:
+
+SAVEPOINTS:
+
+ - This concept allows users to save progress to a certain extent when we want in a transaction. Now, take this code to understand how save points work:
+
+  ```
+	START TRANSACTION;
+		-- step A
+		SAVEPOINT sp_a;
+		-- step B (might fail)
+		SAVEPOINT sp_b;
+		-- something fails:
+		ROLLBACK TO SAVEPOINT sp_b;   -- undo only after sp_b
+		-- continue or finally
+	COMMIT;
+
+  ```
+
+
+Say in a situation, for some reason, you need to save the progress up to a certain point. Use the `SAVEPOINT name_of_save_point` code. What we are doing here is essentially telling the commit if the next steps pass, we also take them in. But if they fail, which they might, we only take what's up to the save point. 
+
+- `InnoDB` engine needs to be used in order to use any of these (transactions, save points et cetera)
+
+- DEADLOCKS
+	 A dead lock is a situation where two queries are locked together and cannot move. Example would be, say a transaction is needs to access row 1 and 2. Say another transaction also needs to do that. what happens is, they are at a standoff neither willing to wait. This leads to indefinite hangs and straight up crashes. To prevent this, we have methods. Here is the detailed explanation of the whole thing from AI:
+	 **What is a deadlock?**
+		Imagine **two or more transactions** trying to access the same data in a database **at the same time**.   
+		If Transaction A holds a lock on Row 1 and waits for Row 2, while Transaction B holds a lock on Row 2 and waits for Row 1 → **neither can proceed**.
+		This situation is called a **deadlock**.
+> 		Analogy: Two people blocking each other in a narrow hallway, each waiting for the other to move.
+> 		
+    Why it matters
+	 Deadlocks prevent transactions from completing.
+	 If unhandled, your application may **hang indefinitely** or throw errors.
+	1. Catch deadlock errors (MySQL error codes like `1213)
+	MySQL **detects deadlocks automatically** and will abort **one of the conflicting transactions** to resolve the deadlock.    
+	It reports the error with **code 1213** (`ER_LOCK_DEADLOCK`) and a message like “Deadlock found when trying to get lock; try restarting transaction.”
+	“Catch” means: in your **application code**, detect this error and **handle it gracefully**, instead of letting it crash the app.
+	`try:     cursor.execute("some transactional SQL") except mysql.connector.Error as err:     if err.errno == 1213:  # deadlock error         # handle retry here`
+	Retry the whole transaction with exponential backoff:
+	Retry the whole transaction: After a deadlock, you usually **re-run the entire transaction** from scratch, because it was aborted.
+	Exponential backoff: Wait a bit before retrying, and increase the wait time each time.
+	 Example: wait 100ms → 200ms → 400ms …
+	Prevents **multiple transactions from colliding repeatedly**, reducing load and contention.
+			
+4. Make retries idempotent
+		
+	What is idempotency?
+		A process is **idempotent** if **running it multiple times has the same effect as running it once**.   
+		- This is crucial because **retrying a transaction after deadlock** might run **some queries twice** if not handled carefully.		
+		**Example:**
+		- Bad:
+		    `INSERT INTO orders (id, user_id) VALUES (NULL, 1);`
+		    - Retrying can insert **duplicate rows**    
+		- Good (idempotent / with idempotency key):
+		    `INSERT INTO orders (idempotency_key, user_id) VALUES ('abc123', 1) ON DUPLICATE KEY UPDATE ...;`
+		    - Retrying does **not create duplicates**, transaction can safely be re-run.
+
+### Difference between Delete and Turncate
+
+Delete:
+
+This is a keyword used when you want to delete rows row-by-row. This also allows conditional functionality. But the core drawback is, it takes a lot of time on large databases because it does it's operations row-by-row. Useful when we want to selectively delete stuff or remove a small table. 
+
+`DELETE TABLE table_name WHERE condition_if_need_be;`
+
+
+Turncate:
+
+This is a keyword used when you want to delete an entire table. No conditions are allowed. This completely erases the table from existence and in some versions of SQL, this cannot be rolled back. So use this carefully. This takes far less time than delete though, because it directly deallocates the memory the table holds, rendering it useless.  
+
+`TURNCATE TABLE table_name;`
+

@@ -50,9 +50,9 @@ What are ACID properties in database transactions? #
 
 Write a query to start a transaction, update a record, and commit the transaction. #
 
-How would you handle errors during a transaction to ensure data integrity?
+How would you handle errors during a transaction to ensure data integrity? #
 
-Explain the difference between TRUNCATE and DELETE commands.
+Explain the difference between TRUNCATE and DELETE commands.#
 
 What is a foreign key, and how does it enforce referential integrity?
 
