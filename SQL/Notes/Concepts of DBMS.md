@@ -199,7 +199,7 @@ but you **can’t** actually edit their core logic; you must drop & recreate the
 
 ---
 
-## ⚡ The Strategic Angle
+### ALTER
 
 |Level|What You Can Do|Risks|
 |---|---|---|
@@ -212,7 +212,7 @@ but you **can’t** actually edit their core logic; you must drop & recreate the
 Now, that is the single most powerful command in the entireity of SQL.
 
 
-## DELETE, DROP
+### DELETE, DROP
 
 DELETE is a keyword used to delete rows. The keyword is usually followed by "FROM" and then table name and then a condition on which the deletion should occur. 
 
@@ -226,7 +226,7 @@ EX:
 	`DROP DATABASE apex_legends;
 	
 
-# Auto commit:
+### Auto commit:
 
 - **Autocommit ON:** Each SQL statement is immediately committed; failures affect only that statement.
     
@@ -243,7 +243,7 @@ By default, it's turned on.
 There is a major disadvantage to using autocommit though. Once a line is run, it autocommits, so we cannot roleback if we want. But if we are commiting manually, we can always rollback.
 
 
-## INSERT
+### INSERT
 
 In order to add rows to a particular table, first make sure that you are using that particular database and then do this:
 
@@ -259,18 +259,18 @@ However, say we don't have 10 rows of data for a particular row, but there are 1
 				 ```
 
 
-## 1. How to find the count of rows in a table?
+### 1. How to find the count of rows in a table?
 
 In SQL, there are two ways to do this. One is rough and approximate, but very fast. The other is dependent on the size of the database. Usually we opt for the method which is O(n) because it is accurate and we don't use the O(1) method normally. 
 
-### O(n) method:
+#### O(n) method:
 
 What we do here is, we make the computer check every row and make a count. Therefore, it is O(n). Here is the code for it:
 
 `SELECT COUNT(*) FROM Schema_name.Table_name;`
 
 
-### O(1) method:
+#### O(1) method:
 
 What we do here is, we go into the metadata of the table that we are querying from and we extract the count from there. This count refreshes only when the system auto ANALYSEs the data being pushed into it. The count we get will be from the last analysis. That count too is an estimate. therefore, we cannot really rely on this one to be exact. But it does give us an estimate real quick. Here is how you implement it:
 
@@ -279,18 +279,18 @@ What we do here is, we go into the metadata of the table that we are querying fr
 NOTE: The `information_schema.tables` contains the metadata including, but not limited to, TABLE_ROWS, DATA_LENGTH, AVG_ROW_LENGTH, MAX_DATA_LENGTH, ENGINE, VERSION et cetera. 
 
 
-## JOINS... What are they?
+### JOINS... What are they?
 
 
 This table is all you need to know about joins:
 
-|Join Type|Set Analogy|Explanation|
-|---|---|---|
-|**INNER JOIN**|A ∩ B (intersection)|Only rows that exist in both tables.|
-|**LEFT JOIN**|A ∪ (A ∩ B complement)|All rows from the left table; fill NULLs for missing right-table rows.|
-|**RIGHT JOIN**|B ∪ (B ∩ A complement)|All rows from the right table; fill NULLs for missing left-table rows.|
-|**FULL OUTER JOIN**|A ∪ B (union)|All rows from both tables; fill NULLs where matches are missing.|
-|**CROSS JOIN**|A × B (Cartesian product)|Every row from left combined with every row from right.|
+| Join Type           | Set Analogy               | Explanation                                                            |
+| ------------------- | ------------------------- | ---------------------------------------------------------------------- |
+| **INNER JOIN**      | A ∩ B (intersection)      | Only rows that exist in both tables.                                   |
+| **LEFT JOIN**       | A ∪ (A ∩ B complement)    | All rows from the left table; fill NULLs for missing right-table rows. |
+| **RIGHT JOIN**      | B ∪ (B ∩ A complement)    | All rows from the right table; fill NULLs for missing left-table rows. |
+| **FULL OUTER JOIN** | A ∪ B (union)             | All rows from both tables; fill NULLs where matches are missing.       |
+| **CROSS JOIN**      | A × B (Cartesian product) | Every row from left combined with every row from right.                |
 
 Left join basically does this:
 
@@ -298,28 +298,28 @@ whatever is in the left table must always be in the left join table. but, someti
 
 Inner join only gives the particular row in the table if the entity we are basing our search on is in both the tables. Here are the code snippets of all the above joins in action.
 
-### INNER JOIN
+#### INNER JOIN
 
 `SELECT * FROM table_1 x INNER JOIN table_2 y ON x.ID = y.ID;`
 
 What we are doing is, we are calling entities in table_1 as x and calling entities in table_2 as y. If for any entity x.ID = y.ID, then, it is quite clear that that particular row will be in the join. The x and y are solely used to write the condition. ON is the keyword, not where... ON.
 
-### LEFT JOIN
+#### LEFT JOIN
 
 `SELECT * FROM table_1 x LEFT JOIN table_2 y ON x.ID = y.ID;`
 
 I seriously do not think that right join is useful at all because we can just use left join on everything. So, I will not be writing the code here. It's a waste of space.
 
-### OUTER JOIN
+#### OUTER JOIN
 
 `SELECT * FROM table_1 x OUTER JOIN table_2 y ON x.ID = y.ID;`
 
-### CROSS JOIN
+#### CROSS JOIN
 
 `SELECT * FROM table_1 x CROSS JOIN table_2 y ON x.ID = y.ID;`
 
 
-# How do you stack statements on one another?
+### How do you stack statements on one another?
 
 ```
 SELECT COUNT(*) FROM (SELECT * FROM (SELECT x.*, y.amount, y.from_date, y.to_date FROM employee x LEFT JOIN salary y ON x.emp_no = y.emp_no AND y.to_date = '9999-01-01') as T WHERE amount IS NULL) AS k;
@@ -332,7 +332,7 @@ Now, We did this because, wherever SQL expects a table, it doesn't take a statem
 
 `SELECT COUNT(*) FROM ...` SQL expects a table after that 'from'. We cannot give it a statement instead of a table. Therefore, we give it a statement and then name the statement as a variable T so that SQL thinks it's an actual table and runs the code inside. We are giving a fake variable to the whole statement. that's it.
 
-## Sorting data
+### Sorting data
 
 When we have a table and we want to view the table in a neat ascending order or descending order based on anything, this is what we need to do. We can either sort in ascending order or descending order. Both of their syntaxes are very similar so here is a snapshot of the code:
 
@@ -353,7 +353,7 @@ EX:
 What this does is, it sorts the data first by column_name1 and then, if any values of column_name1 are same, we would look at column_name2.
 
 
-## Aggregates... The soul of SQL
+### Aggregates... The soul of SQL
 
 Now, to the most important thing and also, the easiest. 
 Aggregates are functions that take in multiple rows of input and give a single output or a statistic or some sort of metric. These functions answers questions like, "What is the average pay?", "How many employees are here?" et cetera. 
@@ -392,7 +392,7 @@ We can also filter the things we are operating on. Here is an example:
 
 We are checking the max salary where there are no dues. That is how to use a filter with these functions. 
 
-## GROUPS
+### GROUPS
 
 Groups is just aggregation on steroids. To understand this topic to it's extreme, we first need to know why it's used. Look at this question:
 
@@ -439,7 +439,7 @@ HAVING count_per_dept > 2;
 ```
 
 
-## SUBQUERIES AND NESTED QUERIES
+### SUBQUERIES AND NESTED QUERIES
 
 Simply, A SELECT statement inside any other statement (SELECT, INSERT, DELETE, ET CETERA) is called a subquery. Now, multiple layers of queries are called nested subqueries. 
 
@@ -785,3 +785,54 @@ DEFAULT(a) 10
 ```
 
 This and that are both the same. This works for every constraint here.
+
+
+### SLOW-QUERIES
+
+Identifying slow queries is one of the most important things you should learn when you are trying to optimizing queries. Finding the worst performers is one of the most important things you can do. Now, there are several steps we can take to find out the slow queries. 
+
+- ##### SLOW QUERY LOGS
+	Here is the syntax to understand how this goes:
+	```
+	
+	-- first thing we are going to do is, activate slow query logging
+	SET GLOBAL slow_query_log = 'ON';
+	--- we tell where the log must be logged. 
+	SET GLOBAL slow_query_log_file = '/var/log/mysql/slow.log';
+	-- We tell the computer that if the log takes more than 1 second,to log it.
+	SET GLOBAL long_query_time = 1;
+		
+	```
+This helps us see the logs at this address '/var/log/mysql/slow.log'. All these logs are of bad queries.
+
+- #### EXPLAIN
+    'Explain' is a keyword used to explain tables. Here is how it works.
+    `EXPLAIN SELECT * FROM table_name WHERE condition;`
+	We will get all the metadata from that query including the time it took for the query to run.
+
+- #### PERFORMANCE SCHEMA
+  MySQL has a performance schema table that has all the performance details we can ever ask for. The way you access it is like this:
+  ```
+  SELECT performance_schema.events_statements_summary_by_digest ORDER BY AVG_TIME_WAIT DESC; 
+  ```
+What this gives you is a table of the time it took for each query ordered in the descending order.
+This is not of much help tho. So be careful when using this.
+
+
+### INDEXING
+
+In SQL, you can index each column. You don't need to index a table by it's rows like a normal table. We can index each column and here is how you do it:
+
+```
+CREATE INDEX index_name ON orders(name_of_the_column);
+```
+
+These indexes can also be composite:
+
+```
+CREATE INDEX inde_name ON orders(col_name1, col_name2, et cetera...);
+```
+
+What this does is, it creates the same indices for all the columns mentioned above. If you give all the columns in the table, you are asking for a whole tabular index. Simple.
+
+These allow us to quickly read files because it helps SELECT a lot to have columns indexed. However, it is computationally heavy to write indices for every single column. Therefore, when a particular column is read heavy, we use indices for that column. When a particular column is write heavy, you tend not to use indices there. Try to use `performance_schema` to see which indices are becoming a problem to your commands. Note that InnoDB (the engine of MySQL we all tend to use) is highly optimized for write. So, this allows us to use indices more often but it doesn't mean we should use them everywhere.

@@ -54,19 +54,19 @@ How would you handle errors during a transaction to ensure data integrity? #
 
 Explain the difference between TRUNCATE and DELETE commands.#
 
-What is a foreign key, and how does it enforce referential integrity?
+What is a foreign key, and how does it enforce referential integrity? #
 
 Performance Optimization
 
-How can you identify slow-running queries in MySQL?
+How can you identify slow-running queries in MySQL? #
 
-Explain the use of EXPLAIN in analyzing query performance.
+Explain the use of EXPLAIN in analyzing query performance. #
 
-What strategies can be employed to optimize a query that joins multiple large tables?
+What strategies can be employed to optimize a query that joins multiple large tables? #
 
-How would you handle indexing in a table with frequent updates?
+How would you handle indexing in a table with frequent updates?#
 
-Explain the concept of query caching in MySQL.
+Explain the concept of query caching in MySQL.(its removed in SQL 8+) #
 
 Stored Procedures and Triggers
 
