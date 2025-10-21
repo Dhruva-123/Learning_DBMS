@@ -82,13 +82,13 @@ How would you handle error handling within a stored procedure? #
 
 Complex Queries and Real-World Scenarios
 
-Write a query to find the top 3 selling products in the last quarter.
+Write a query to find the top 3 selling products in the last quarter. #
 
-How would you calculate the running total of sales for each day?
+How would you calculate the running total of sales for each day? #
 
-Write a query to identify customers who have not placed an order in the last 6 months.
+Write a query to identify customers who have not placed an order in the last 6 months. #
 
-How can you implement pagination in a query result?
+How can you implement pagination in a query result? # (LIMIT, OFFSET keywords)
 
 Write a query to compare sales figures between two consecutive years.
 
