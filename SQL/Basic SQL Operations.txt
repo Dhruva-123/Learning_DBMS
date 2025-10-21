@@ -70,15 +70,15 @@ Explain the concept of query caching in MySQL.(its removed in SQL 8+) #
 
 Stored Procedures and Triggers
 
-Write a stored procedure to insert a new employee record into the employees table.
+Write a stored procedure to insert a new employee record into the employees table.#
 
-Explain the difference between a stored procedure and a function in MySQL.
+Explain the difference between a stored procedure and a function in MySQL.#
 
-What is a trigger, and how can it be used to enforce business rules?
+What is a trigger, and how can it be used to enforce business rules? #
 
-Write a trigger that automatically updates the last_modified timestamp when a record is updated.
+Write a trigger that automatically updates the last_modified timestamp when a record is updated. #
 
-How would you handle error handling within a stored procedure?
+How would you handle error handling within a stored procedure? #
 
 Complex Queries and Real-World Scenarios
 

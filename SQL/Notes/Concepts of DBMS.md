@@ -628,7 +628,7 @@ Say in a situation, for some reason, you need to save the progress up to a certa
 		    `INSERT INTO orders (idempotency_key, user_id) VALUES ('abc123', 1) ON DUPLICATE KEY UPDATE ...;`
 		    - Retrying does **not create duplicates**, transaction can safely be re-run.
 
-### Difference between Delete and Turncate
+### Difference between Delete and `Turncate`
 
 Delete:
 
@@ -836,3 +836,261 @@ CREATE INDEX inde_name ON orders(col_name1, col_name2, et cetera...);
 What this does is, it creates the same indices for all the columns mentioned above. If you give all the columns in the table, you are asking for a whole tabular index. Simple.
 
 These allow us to quickly read files because it helps SELECT a lot to have columns indexed. However, it is computationally heavy to write indices for every single column. Therefore, when a particular column is read heavy, we use indices for that column. When a particular column is write heavy, you tend not to use indices there. Try to use `performance_schema` to see which indices are becoming a problem to your commands. Note that InnoDB (the engine of MySQL we all tend to use) is highly optimized for write. So, this allows us to use indices more often but it doesn't mean we should use them everywhere.
+
+
+### PROCEDURE & FUNCTIONS
+
+A procedure stores code and runs it on command. The syntax goes like this:
+
+```
+DELIMITER $$
+
+CREATE PROCEDURE name_of_the_procedure(
+IN variable_name1 data_type,
+IN variable_name2 data_type,
+IN variable_name3 data_type,
+....
+....
+....
+)
+BEGIN
+	--the commands we need to run should be written here
+END $$
+
+DELIMITER ;	
+
+CALL name_of_the_procedure(var1, var2, var3 ...);
+```
+
+This is the general layout of the procedure. Now, let's explain each step.
+
+- `DELIMITER $$/ DELIMITER`
+	Each procedure is wrapped in `DELIMITER $$/DELIMITER` because we want to delimit the number of commands we can run inside the function. This allows us to use multi-statement procedures. Note that the DELIMITER ending the whole thing has to have a space between it and the semi-colon or you get an error.
+- IN
+	The keyword `IN` is used to represent input variables. We then explain the name of the variable to the computer and then the datatype. This is just like creating a table. 
+- `BEGIN/END $$`
+	These represent the start and end of the procedure.
+- `CALL`
+	The call is written to use the procedure whenever we want. you just give it the variables and it does what it needs to. 
+
+Here is an example procedure and it's call:
+
+```
+USE employee;
+
+DELIMITER $$
+CREATE PROCEDURE insert_name(
+IN emp_no_in INT,
+IN amount_in INT,
+IN from_date_in DATE,
+IN to_date_in DATE
+)
+BEGIN
+INSERT INTO salary(emp_no, amount, from_date, to_date) VALUES(emp_no_in, amount_in, from_date_in, to_date_in);
+END $$
+DELIMITER ;
+
+CALL insert_name(1111, 9999999, '2028-06-06', '2028-07-07');
+
+```
+
+There is one more thing to bear in mind here. Once a procedure is read by the workbench, it stores this procedure. That means, when you run the code again with this being in the code, you will run into an error saying that the procedure named `name_of_the_procedure` already exists. Just comment out the procedure.
+
+We call these procedures and not functions for a reason. In MySQL, functions are a different sort of breed. 
+
+There are a few fundamental differences between a procedure and a function:
+
+| Aspect                   | Stored Procedure                                                                                       | Function                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Purpose**              | Performs actions (insert, update, delete, complex logic). Can return multiple result sets or no value. | Computes and **returns a single value**. Usually used in expressions.                            |
+| **Return Type**          | Optional (`OUT` parameters), can return 0 or more values via parameters.                               | **Mandatory** `RETURN <value>` of a specific type.                                               |
+| **Usage in SQL**         | Invoked via `CALL procedure_name(...)`. Cannot be used inside a SQL expression.                        | Can be used in SQL queries, e.g., `SELECT func_name(...)`.                                       |
+| **Side Effects**         | Can modify data (INSERT, UPDATE, DELETE).                                                              | Generally should not have side effects. MySQL allows modification, but it’s **not recommended**. |
+| **Transaction Handling** | Can include multiple statements, loops, and conditional logic.                                         | Simpler, usually one expression or computation.                                                  |
+| **Error Handling**       | Can use `DECLARE ... HANDLER`.                                                                         | Limited error handling; mostly relies on returning a valid value.                                |
+
+So basically, you use a function when you need something returned (like when we are using a conditional statement) and the computation inside that said function is light (1-2 commands). Other-wise, procedures are prefered. Here is how you write a function:
+
+```
+DELIMITER $$
+
+CREATE FUNCTION is_active(emp_no_in INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE result BOOLEAN;
+    
+    SELECT CASE WHEN status = 'active' THEN TRUE ELSE FALSE END
+    INTO result
+    FROM employee
+    WHERE emp_no = emp_no_in;
+    
+    RETURN result;
+END $$
+
+DELIMITER ;
+
+```
+
+You will notice a few odd things here.
+- First of all, let's talk about the lack of `IN` while we are passing parameters into the function. That is because, all input variables are IN for a function but for a procedure, you have to explicitly tell the PC what it is. Here is how IN OUT INOUT works:
+
+```
+DELIMITER $$
+
+CREATE PROCEDURE demo_proc(
+    IN in_val INT,
+    OUT out_val INT,
+    INOUT inout_val INT
+)
+BEGIN
+    SET out_val = in_val * 2;        -- returning new value via OUT
+    SET inout_val = inout_val + 10;  -- modifying INOUT value
+END $$
+
+DELIMITER ;
+
+SET @a = 5, @b = 0, @c = 7;
+CALL demo_proc(@a, @b, @c);
+SELECT @b, @c;  -- @b = 10 (OUT), @c = 17 (INOUT)
+
+```
+
+What you are seeing here is the usage of IN OUT INOUT keywords. IN means INPUT. OUTPUT means OUPUT. INOUT is both input and output. So it will be output no matter what. So once the CALL ends, what the workbench does is, it sends back the OUT AND INOUT variables to the computer successfully updating the variables that are declared outside the procedure. Why we don't have this in functions is because there is a RETURN statement we can use in functions unlike PROCEDUREs. 
+
+- The next thing we would notice is the declaration of `RETURNS BOOLEAN`. We are disclosing the return type of the function early.
+- The next confusion we get is from the `DETERMINISTIC/NON-DETERMINISTIC` keywords. Deterministic means, if the same inputs are given, do we always get the same output? if 1 is given as input, if sometimes we get 2 and sometimes we get 10 as results, it's NON-DETERMINISTIC for sure. That's the simple rule of thumb. Here are examples of where you use that and this:
+
+NON DETERMINISTIC
+
+```
+CREATE FUNCTION rand_int()
+RETURNS INT
+NOT DETERMINISTIC
+BEGIN 
+RETURN FLOOR(1 + (RAND()* 100));
+END $$
+```
+
+DETERMINISTIC
+
+```
+CREATE FUNCTION calculate(
+a_in INT,
+b_in INT
+)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+RETURN a_in = b_in; -- we use single equal for comparision in SQL
+END $$
+```
+
+Note that it really doesn't crash your code if you are wrong about weather a function is deterministic or not. We write this purely for optimization's sake.
+
+- The next line will tell the computer what sort of SQL commands we are using in the function. AGAIN, THIS IS NOT NEEDED FOR THE FUNCTIONING OF OUR FUNCTION, IT JUST ADDS EFFICIENCY TO OUR FUNCTION. Here are the different lines you can write there:
+
+|Clause|Meaning|When to use|
+|---|---|---|
+|**NO SQL**|The function does **not contain any SQL statements**.|Pure computation like `RETURN a_in + b_in;`|
+|**CONTAINS SQL**|The function **may contain SQL statements** but **does not modify data**.|Simple `SELECT` queries that don’t change tables.|
+|**READS SQL DATA**|The function **reads from tables** but does **not modify data**.|`SELECT * FROM employee WHERE emp_no = a_in;`|
+|**MODIFIES SQL DATA**|The function **modifies data** in the database (`INSERT`, `UPDATE`, `DELETE`).|Rare in functions; usually done in procedures instead.|
+
+
+That's all there is to explain here.
+
+- Next we see the code trying to create a boolean variable called result. It is done so like this `DECLARE var_name BOOLEAN`
+- This is just a standard SQL line:
+
+```
+SELECT CASE WHEN status = 'active' THEN TRUE ELSE FALSE END
+INTO result
+FROM employee
+WHERE emp_no = emp_no_in;
+```
+
+We are checking if the status is active. If it is, we are assigning true to result else false for a given employee number `emp_no_in`.
+
+
+So this is how a function is written.
+
+ERROR HANDLING:
+
+In procedures, we error handle with the help of handler. Here is the blueprint of how it goes:
+
+```
+DECLARE handler_type HANDLER FOR condition_value
+BEGIN
+    -- handler logic
+END;
+```
+
+`handler_type` is of two types. It's either continue or exit. what these do is tell the computer to either exit when the error is found or continue in spite of the error.
+
+There could be a lot of `condition_values`. Here are a few:
+
+| Condition         | Meaning                             |
+| ----------------- | ----------------------------------- |
+| `SQLEXCEPTION`    | Any error occurs                    |
+| `SQLWARNING`      | A warning occurs                    |
+| `NOT FOUND`       | e.g., `SELECT INTO` returns no rows |
+| `SQLSTATE 'xxxx'` | Specific error code                 |
+
+
+Here is an example to drive home the handling of errors:
+
+
+```
+DELIMITER $$
+
+CREATE PROCEDURE divide_numbers(IN a INT, IN b INT, OUT result DECIMAL(10,2))
+BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET result = NULL;  -- return NULL if any error occurs
+    END;
+
+    SET result = a / b;  -- will raise error if b = 0
+END $$
+
+DELIMITER ;
+
+```
+
+
+### TRIGGER
+
+Triggers are these function like statements you give to the computer to do a certain action automatically when a certain trigger is 'pressed'. This comes in handy in a lot of places including, but not limited to, validation of data before entering to the database, setting caps to the data we enter, can create cascading updates, automatic audits etc. Now, here is the general layout of a TRIGGER:
+
+```
+CREATE TRIGGER trigger_name
+{BEFORE | AFTER}{INSERT | DELETE | UPDATE}
+ON table_name
+FOR EACH ROW 
+BEGIN
+-- LOGIC HERE
+END;
+```
+
+What we are essentially doing here is, for a given table, `table_name`, weather it is before a certain action (insert, delete, update) or after, do this action for each row.
+
+Here is an example code to really drive it in:
+
+```
+CREATE TRIGGER salary_check
+BEFORE INSERT 
+ON salary_table
+FOR EACH ROW
+BEGIN
+	IF NEW.amount < 10000 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'You cannot have salary less than 10k';
+	END IF;
+END; 
+```
+
+What this does is, before we are inserting into `salary_table`, we are telling the computer to run this code. That code checks if the amount is less than 10k. if it is, we are giving an error and setting the error message to some text. 
+
+
