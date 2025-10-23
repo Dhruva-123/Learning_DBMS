@@ -90,31 +90,31 @@ Write a query to identify customers who have not placed an order in the last 6 m
 
 How can you implement pagination in a query result? # (LIMIT, OFFSET keywords)
 
-Write a query to compare sales figures between two consecutive years.
+Write a query to compare sales figures between two consecutive years. #
 
-Data Modeling and Schema Design
+Data Modeling and Schema Design 
 
-Design a database schema for an online bookstore, including tables for books, authors, and customers.
+Design a database schema for an online bookstore, including tables for books, authors, and customers. #
 
-Explain the concept of denormalization and when it might be appropriate.
+Explain the concept of denormalization and when it might be appropriate.#
 
-What are the benefits and drawbacks of using views in a database?
+What are the benefits and drawbacks of using views in a database?#
 
-How would you handle schema changes in a production environment?
+How would you handle schema changes in a production environment? #
 
-Explain the role of constraints in database design.
+Explain the role of constraints in database design.#
 
 Security and User Management
 
-How would you grant and revoke privileges for a user in MySQL?
+How would you grant and revoke privileges for a user in MySQL? #
 
-Explain the concept of roles in MySQL user management.
+Explain the concept of roles in MySQL user management. #
 
-What measures can be taken to secure a MySQL database?
+What measures can be taken to secure a MySQL database? #
+ 
+How can you audit user activity in MySQL?#
 
-How can you audit user activity in MySQL?
-
-Explain the importance of data encryption in database security.
+Explain the importance of data encryption in database security.#
 
 
 practice dataset location:

@@ -94,6 +94,8 @@ If we want a countable number of columns, we can use this syntax;
 		`RENAME TABLE former_name TO later_name;
 This only works for a table though, not the entire database.
 
+### ALTER
+
 - Here comes one of the most important keywords in the entire SQL language. 
 - The keyword 'ALTER' functions in a lot of different ways. It is used to add columns to a table, remove columns from a table, etc etc. Here is a single use case;
 				`ALTER TABLE name_of_the_table 
@@ -103,11 +105,9 @@ Note that the alter statement itself doesn't have any semi colon to it simply be
 
 Here is a dump of where and how the keyword "Alter" is useful
 
-### 🧱 1. `ALTER TABLE`
+#### `ALTER TABLE`
 
 This is where 90% of `ALTER` usage happens.
-
-#### ✅ You Can:
 
 - **Add / Drop Columns**
     
@@ -141,38 +141,24 @@ This is where 90% of `ALTER` usage happens.
     
     `ALTER TABLE employees ENGINE = InnoDB; ALTER TABLE employees CONVERT TO CHARACTER SET utf8mb4;`
     
-
-💡 **Strategic note:**  
 `ALTER TABLE` locks the table while operating — on large datasets this can freeze production.  
 In big companies, DBAs use _online schema migration tools_ (like `gh-ost`, `pt-online-schema-change`) to make such changes safely.
 
 ---
 
-### ⚙️ 2. `ALTER DATABASE`
+#### `ALTER DATABASE`
 
 Much smaller scope.
-
-#### ✅ You Can:
 
 - Change **character set** or **collation**:
     
     `ALTER DATABASE mydb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;`
-    
-
-#### 🚫 You Cannot:
-
-- Rename the database
-    
-- Move or clone it
-    
-- Alter its user grants
-    
 
 So `ALTER DATABASE` is mostly for _text encoding and sorting rules_, not structural transformations.
 
 ---
 
-### 🔐 3. `ALTER USER`
+#### `ALTER USER`
 
 Used for authentication-level changes.
 
@@ -182,7 +168,7 @@ Or modify privileges and plugin auths.
 
 ---
 
-### 🧠 4. `ALTER VIEW`
+#### `ALTER VIEW`
 
 Change a view definition:
 
@@ -192,25 +178,20 @@ Equivalent to dropping and recreating, but keeps permissions.
 
 ---
 
-### 🏗️ 5. `ALTER PROCEDURE`, `ALTER FUNCTION`, `ALTER EVENT`
+#### `ALTER PROCEDURE`, `ALTER FUNCTION`, `ALTER EVENT`
 
 Used to modify metadata (like SQL security or comments) —  
 but you **can’t** actually edit their core logic; you must drop & recreate them.
 
 ---
 
-### ALTER
-
-|Level|What You Can Do|Risks|
-|---|---|---|
-|**Database**|Change encoding, defaults|Minimal|
-|**Table**|Full schema mutation|Can lock or corrupt data if mishandled|
-|**Column**|Change type, name, constraints|Data loss if conversion fails|
-|**User**|Security and auth|Risk of lockout|
-|**View/Procedure**|Update logic or permissions|Low, but can break dependencies|
-
-Now, that is the single most powerful command in the entireity of SQL.
-
+| Level              | What You Can Do                | Risks                                  |
+| ------------------ | ------------------------------ | -------------------------------------- |
+| **Database**       | Change encoding, defaults      | Minimal                                |
+| **Table**          | Full schema mutation           | Can lock or corrupt data if mishandled |
+| **Column**         | Change type, name, constraints | Data loss if conversion fails          |
+| **User**           | Security and auth              | Risk of lockout                        |
+| **View/Procedure** | Update logic or permissions    | Low, but can break dependencies        |
 
 ### DELETE, DROP
 
@@ -1093,4 +1074,97 @@ END;
 
 What this does is, before we are inserting into `salary_table`, we are telling the computer to run this code. That code checks if the amount is less than 10k. if it is, we are giving an error and setting the error message to some text. 
 
+
+
+
+### PRIVILAGES
+
+In MySQL, You can create a lot of users and give them different levels of privileges. There are 2 different layers of steps one can take to preserve security and efficiency. 
+
+First of all, we can `create/drop` users in MySQL. That doesn't mean that there are any privileges assigned. We need to do that in a separate statement. That would be `grant/revoke`. 
+
+First, let's talk about `create/drop` 
+
+CREATE:
+
+Here is the barebones syntax to create a user:
+
+```
+CREATE USER 'user_name'@'ip_of_the_user's_internet' IDENTIFIED BY 'password_of_the_user'
+```
+
+There are a few points to note here. In the place of the IP, you can generally provide the IP of the user or you can go with '%' or you can go with 'localhost'.  Giving an IP allows usage by the user through that internet IP only. Giving a '%' allows the user created to access data from any IP address and any device they want. Giving 'localhost' allows the user to only access the database via the same device as the MySQL server. No other device will be allowed.
+
+
+DROP:
+
+Here is the barebones syntax to drop a user:
+
+```
+DROP USER 'user_name'@'ip_of_the_user's_internet';
+```
+
+However, most people tend to use if statements to not crash the entire line of commands like so
+
+
+```
+DROP USER IF EXISTS 'user_name'@'ip_of_the_user's_internet';
+```
+Now, let's talk about grant and revoke.
+
+GRANT:
+
+We can grant different privileges to users depending upon their standing with our organization. Here is how you do it in general.
+
+```
+GRANT privileges ON database_name.table_name TO 'user_name'@'ip_of_the_created_user';
+```
+
+in the place of those privileges, you can write `CREATE`, `DELETE` etc.
+
+Here is a few examples of how this works:
+
+EX 1:
+
+```
+GRANT ALL PRIVILEGES ON new_db.* TO 'Alice_CEO'@'%';
+```
+
+what we are doing here is, we are giving all access on the `new_db` (every table) to Alice at every IP address. 
+
+EX 2:
+
+```
+GRANT INSERT,UPDATE,DELETE ON new_db.sales TO 'Micheal_DB_manager'@'10.0.1.%';
+```
+
+So, Michael gets insert update delete on sales table from a particular IP.
+
+NOTE:
+	In order to make this whole access granting a bit easier, roles were invented. Once you create a role, you can just assign the privileges to that role and then assign that role to individuals.
+	Here is how it goes:
+
+    CREATE ROLE 'read_only_role'; -- Creating a role
+    GRANT SELECT ON new_db.* TO 'read_only_role'; -- assigning that role some privileges
+    GRANT 'read_only_role' TO 'James_clerk'@'10.0.0.%'; --giving james access to that role
+    SET DEFAULT ROLE 'read_only_role' TO 'James_clerk'@'10.0.0.%'; --making that role james' default role.
+
+
+In MySQL, you first need to grant a role to a user in order to set that role as default role to that user. So, all the steps there are neccesary.
+
+REVOKE:
+
+REVOKE works exactly opposite to GRANT with the exact same syntax:
+
+```
+REVOKE privileges ON database_name.table_name TO 'user_name'@'ip_of_the_created_user';
+```
+
+this concludes the basics of SQL.
+
+---
+---
+---
+---
+---
 
