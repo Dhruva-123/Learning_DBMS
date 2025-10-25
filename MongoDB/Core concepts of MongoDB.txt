@@ -1,0 +1,111 @@
+ Understand what MongoDB is and why document databases exist
+
+ Learn the difference between MongoDB and MySQL
+
+ Understand collections, documents, and BSON structure
+
+ Learn about ObjectId and automatic indexing
+
+ Install MongoDB locally
+
+ Install and explore MongoDB Compass (GUI)
+
+ Install MongoDB VS Code extension
+
+ Create a free MongoDB Atlas cloud cluster
+
+ Learn to connect to Atlas from your local environment
+
+ Perform basic CRUD operations: insertOne / insertMany / find / findOne / updateOne / updateMany / deleteOne / deleteMany
+
+ Practice basic queries on a sample dataset (e.g., students, books)
+
+ Understand indexing and index types (single, compound, text, geospatial)
+
+ Learn how to inspect query plans with explain()
+
+ Understand data types: arrays, embedded docs, ObjectId
+
+ Learn projection and sorting in queries
+
+ Implement pagination using limit and skip
+
+ Understand read and write concerns
+
+ Master the Aggregation Framework: $match, $group, $sort, $project, $unwind, $lookup
+
+ Build a simple analytics pipeline with aggregation
+
+ Learn Embedding vs Referencing
+
+ Understand one-to-one, one-to-many, and many-to-many modeling
+
+ Study schema evolution and versioning strategies
+
+ Understand trade-offs between normalization and denormalization
+
+ Learn schema design patterns: Bucket, Outlier, Extended Reference, Polymorphic
+
+ Design and model a small social media schema (users, posts, comments)
+
+ Visualize schema relationships using Compass or Atlas
+
+ Understand Replication and Replica Sets
+
+ Simulate a 3-node replica set locally
+
+ Learn Sharding and how Mongo distributes data
+
+ Configure a basic sharded cluster (locally or in Atlas)
+
+ Learn Transactions (multi-document ACID support)
+
+ Study Read/Write Concerns and durability levels
+
+ Learn profiling tools: mongostat, mongotop, query profiler
+
+ Learn backup and restore procedures (mongodump, mongorestore)
+
+ Understand failover and recovery behavior
+
+ Learn to use MongoDB with Python (PyMongo)
+
+ Learn to use MongoDB with Node.js (Mongoose)
+
+ Create a REST API with MongoDB backend (Flask/FastAPI/Express)
+
+ Implement pagination and filtering in API endpoints
+
+ Integrate MongoDB with analytics tools (Pandas / Power BI)
+
+ Build a mini project: data ingestion pipeline, CRUD dashboard, analytics visualization
+
+ Deploy an app using MongoDB Atlas as backend
+
+ Understand the CAP theorem in MongoDB context
+
+ Learn MongoDB internal architecture: WiredTiger, journaling, oplog
+
+ Perform query optimization with explain()
+
+ Tune aggregation pipelines for performance
+
+ Apply schema refactoring in production
+
+ Study MongoDB security: authentication, roles, encryption
+
+ Understand data partitioning and indexing strategies for scaling
+
+ Explore change streams (real-time data feeds)
+
+ Practice with a real dataset (Kaggle JSON data → Mongo + analytics)
+
+ Complete MongoDB University courses: M001, M121, M220, M320
+
+ Read MongoDB: The Definitive Guide
+
+ Follow MongoDB Developer YouTube Channel
+
+ Explore open-source projects using MongoDB on GitHub
+
+ Build your own project integrating MongoDB end-to-end (blog, analytics, IoT data, etc.)
